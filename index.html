@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Private Login</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  display:grid;place-items:center;
+  padding:20px;background:#f8fafc;
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  color:#111827
+}
+.card{
+  width:100%;max-width:390px;background:white;
+  border:1px solid #e5e7eb;border-radius:22px;
+  padding:30px;box-shadow:0 15px 45px #0f172a0b
+}
+.logo{
+  width:52px;height:52px;border-radius:16px;
+  display:grid;place-items:center;
+  background:#2563eb;color:white;font-size:25px;
+  margin:0 auto 18px
+}
+h1{text-align:center;font-size:25px;margin:0 0 8px}
+.sub{text-align:center;color:#6b7280;font-size:14px;
+  line-height:1.6;margin:0 0 26px}
+label{display:block;font-size:14px;font-weight:600;
+  margin:17px 0 8px}
+input{
+  width:100%;padding:13px 14px;
+  border:1px solid #d1d5db;border-radius:10px;
+  font-size:15px;outline:none;background:white
+}
+input:focus{border-color:#2563eb;
+  box-shadow:0 0 0 3px #2563eb18}
+.pass{display:flex;gap:8px}
+.pass input{min-width:0}
+.pass button{border:1px solid #d1d5db;
+  border-radius:10px;background:white;padding:0 12px}
+.options{display:flex;align-items:center;gap:8px;
+  font-size:13px;color:#4b5563;margin:16px 0}
+.options input{width:auto}
+.submit{
+  width:100%;border:0;border-radius:10px;
+  background:#2563eb;color:white;padding:14px;
+  font-size:15px;font-weight:bold;cursor:pointer
+}
+.submit:disabled{opacity:.6}
+.msg{font-size:13px;line-height:1.6;margin-top:14px;
+  color:#dc2626;overflow-wrap:anywhere}
+.foot{text-align:center;color:#9ca3af;font-size:12px;
+  margin-top:24px}
+#dashboard{display:none}
+.logout{margin-top:20px;background:#fff;
+  color:#dc2626;border:1px solid #fecaca;
+  border-radius:10px;padding:12px;width:100%}
+</style>
+</head>
+<body>
+
+<main class="card" id="loginCard">
+  <div class="logo">◆</div>
+  <h1>Welcome Back</h1>
+  <p class="sub">তোমার অ্যাকাউন্টে প্রবেশ করতে লগইন করো</p>
+
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input id="username" autocomplete="username"
+      placeholder="তোমার Username" required
+      minlength="3" maxlength="24"
+      pattern="[A-Za-z0-9._-]+">
+
+    <label for="password">Password</label>
+    <div class="pass">
+      <input id="password" type="password"
+        autocomplete="current-password"
+        placeholder="তোমার Password" required>
+      <button type="button" id="togglePass"
+        aria-label="Show or hide password">Show</button>
+    </div>
+
+    <label class="options">
+      <input type="checkbox" id="remember" checked>
+      Remember me
+    </label>
+
+    <button class="submit" id="loginBtn" type="submit">
+      Sign In
+    </button>
+    <p class="msg" id="message" role="status"></p>
+  </form>
+  <div class="foot">🔒 Private Members Access</div>
+</main>
+
+<main class="card" id="dashboard">
+  <div class="logo">✓</div>
+  <h1>Login Successful</h1>
+  <p class="sub">স্বাগতম, <strong id="welcomeName"></strong>!</p>
+  <p class="sub">তুমি সফলভাবে লগইন করেছ।</p>
+  <button class="submit" id="logoutBtn">Logout</button>
+</main>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* Firebase Console থেকে নিজের config বসাও */
+  firebaseConfig = {
+  apiKey: "AIzaSyCZ1X7fRuNcxUMzMFQNq8yvzXg_wm1-0Bg",
+  authDomain: "privatelogin-700c0.firebaseapp.com",
+  projectId: "privatelogin-700c0",
+  storageBucket: "privatelogin-700c0.firebasestorage.app",
+  messagingSenderId: "849920579122",
+  appId: "1:849920579122:web:a98380aa5e2b01f11e8e2b",
+  measurementId: "G-LVBBDSYY21"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* Console-এ অ্যাকাউন্ট তৈরির সময় এই suffix ব্যবহার করবে */
+const EMAIL_SUFFIX = "@members.example.com";
+
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const loginBtn = document.getElementById("loginBtn");
+const loginCard = document.getElementById("loginCard");
+const dashboard = document.getElementById("dashboard");
+
+function showMessage(text) {
+  message.textContent = text;
+}
+
+function showLogin() {
+  loginCard.style.display = "block";
+  dashboard.style.display = "none";
+}
+
+function showDashboard(username) {
+  loginCard.style.display = "none";
+  dashboard.style.display = "block";
+  document.getElementById("welcomeName").textContent = username;
+}
+
+document.getElementById("togglePass").onclick = () => {
+  const input = document.getElementById("password");
+  const hidden = input.type === "password";
+  input.type = hidden ? "text" : "password";
+  document.getElementById("togglePass").textContent =
+    hidden ? "Hide" : "Show";
+};
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  showMessage("");
+
+  const username = document.getElementById("username")
+    .value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+
+  if (!/^[a-z0-9._-]{3,24}$/.test(username)) {
+    showMessage("Username 3–24 অক্ষরের হতে হবে।");
+    return;
+  }
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Checking...";
+
+  try {
+    const persistence = document.getElementById("remember").checked
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION;
+
+    await auth.setPersistence(persistence);
+
+    await auth.signInWithEmailAndPassword(
+      username + EMAIL_SUFFIX, password
+    );
+    // পরের ধাপে onAuthStateChanged অনুমোদন যাচাই করবে।
+  } catch (error) {
+    showMessage("লগইন হয়নি। Username ও Password যাচাই করো।");
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign In";
+  }
+});
+
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    showLogin();
+    return;
+  }
+
+  try {
+    const snapshot = await db.collection("users")
+      .doc(user.uid).get();
+
+    const profile = snapshot.data();
+
+    if (!snapshot.exists ||
+        profile.active !== true ||
+        typeof profile.username !== "string" ||
+        user.email !== profile.username + EMAIL_SUFFIX) {
+      await auth.signOut();
+      showLogin();
+      showMessage("এই অ্যাকাউন্টের অনুমতি নেই।");
+      return;
+    }
+
+    showDashboard(profile.username);
+  } catch (error) {
+    await auth.signOut();
+    showLogin();
+    showMessage("অ্যাকাউন্ট যাচাই করা যায়নি। পরে চেষ্টা করো।");
+  }
+});
+
+document.getElementById("logoutBtn").onclick = async () => {
+  await auth.signOut();
+  document.getElementById("password").value = "";
+  showLogin();
+};
+</script>
+</body>
+  </html>
