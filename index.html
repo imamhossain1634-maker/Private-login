@@ -1,233 +1,449 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<title>Private Login</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e14">
+<title>FF INFO HUB</title>
 
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  margin:0;min-height:100vh;
-  display:grid;place-items:center;
-  padding:20px;background:#f8fafc;
-  font-family:Arial,"Noto Sans Bengali",sans-serif;
-  color:#111827
+ background:#0b0e14;color:#fff;
+ font-family:Arial,sans-serif;
+ min-height:100vh
+}
+header{
+ padding:18px;display:flex;justify-content:space-between;
+ align-items:center;background:#141923;
+ border-bottom:1px solid #292f3b;
+ position:sticky;top:0;z-index:10
+}
+.logo{font-size:21px;font-weight:900;color:#ffad32}
+.online{font-size:11px;color:#54df9b}
+main{max-width:850px;margin:auto;padding:18px}
+.hero{
+ background:linear-gradient(130deg,#392719,#171c26);
+ border:1px solid #604426;border-radius:16px;
+ padding:25px;margin-bottom:23px
+}
+.hero h1{font-size:27px;line-height:1.4}
+.orange{color:#ffad32}
+.hero p{color:#b6b6b6;font-size:12px;margin-top:8px}
+.section-title{font-size:17px;margin:23px 0 13px}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:11px
 }
 .card{
-  width:100%;max-width:390px;background:white;
-  border:1px solid #e5e7eb;border-radius:22px;
-  padding:30px;box-shadow:0 15px 45px #0f172a0b
+ background:#171d28;border:1px solid #2b3442;
+ border-radius:13px;padding:17px;cursor:pointer;
+ transition:.2s
 }
-.logo{
-  width:52px;height:52px;border-radius:16px;
-  display:grid;place-items:center;
-  background:#2563eb;color:white;font-size:25px;
-  margin:0 auto 18px
+.card:active{transform:scale(.97)}
+.card .emoji{font-size:25px}
+.card h3{font-size:14px;margin-top:12px}
+.card p{font-size:11px;color:#929baa;margin-top:5px}
+.panel{
+ background:#171d28;border:1px solid #2b3442;
+ border-radius:14px;padding:17px;margin-top:16px
 }
-h1{text-align:center;font-size:25px;margin:0 0 8px}
-.sub{text-align:center;color:#6b7280;font-size:14px;
-  line-height:1.6;margin:0 0 26px}
-label{display:block;font-size:14px;font-weight:600;
-  margin:17px 0 8px}
-input{
-  width:100%;padding:13px 14px;
-  border:1px solid #d1d5db;border-radius:10px;
-  font-size:15px;outline:none;background:white
+.hidden{display:none}
+input,select{
+ width:100%;padding:13px;margin:9px 0;
+ background:#0c1119;color:white;
+ border:1px solid #384353;border-radius:8px;
+ outline:none;font-size:14px
 }
-input:focus{border-color:#2563eb;
-  box-shadow:0 0 0 3px #2563eb18}
-.pass{display:flex;gap:8px}
-.pass input{min-width:0}
-.pass button{border:1px solid #d1d5db;
-  border-radius:10px;background:white;padding:0 12px}
-.options{display:flex;align-items:center;gap:8px;
-  font-size:13px;color:#4b5563;margin:16px 0}
-.options input{width:auto}
-.submit{
-  width:100%;border:0;border-radius:10px;
-  background:#2563eb;color:white;padding:14px;
-  font-size:15px;font-weight:bold;cursor:pointer
+button{
+ background:#ffad32;color:#17120a;
+ border:0;border-radius:8px;padding:13px;
+ width:100%;font-weight:bold;cursor:pointer
 }
-.submit:disabled{opacity:.6}
-.msg{font-size:13px;line-height:1.6;margin-top:14px;
-  color:#dc2626;overflow-wrap:anywhere}
-.foot{text-align:center;color:#9ca3af;font-size:12px;
-  margin-top:24px}
-#dashboard{display:none}
-.logout{margin-top:20px;background:#fff;
-  color:#dc2626;border:1px solid #fecaca;
-  border-radius:10px;padding:12px;width:100%}
+button:disabled{opacity:.5}
+.result{
+ margin-top:12px;padding:13px;
+ background:#222b38;border-radius:9px;
+ font-size:13px;line-height:1.8;
+ overflow-wrap:anywhere
+}
+.error{color:#ff7777}
+.profile{
+ display:flex;align-items:center;gap:13px;
+ margin-bottom:14px
+}
+.avatar{
+ width:58px;height:58px;border-radius:12px;
+ background:#3a2a18;display:grid;
+ place-items:center;font-size:29px
+}
+.profile h2{font-size:18px;color:#ffb84e}
+.profile small{color:#aaa}
+.stats{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:10px;margin-top:12px
+}
+.stat{
+ background:#171d28;padding:12px;border-radius:9px;
+ border:1px solid #343c49
+}
+.stat small{color:#9ca7b6;font-size:11px}
+.stat h3{font-size:19px;margin-top:6px;color:#ffbd57}
+.copy{margin-top:10px}
+footer{
+ text-align:center;color:#7e8999;
+ font-size:11px;padding:30px 12px
+}
+@media(min-width:600px){
+ .grid{grid-template-columns:repeat(3,1fr)}
+ .stats{grid-template-columns:repeat(4,1fr)}
+}
 </style>
 </head>
+
 <body>
 
-<main class="card" id="loginCard">
-  <div class="logo">◆</div>
-  <h1>Welcome Back</h1>
-  <p class="sub">তোমার অ্যাকাউন্টে প্রবেশ করতে লগইন করো</p>
+<header>
+ <div class="logo">🔥 FF INFO HUB</div>
+ <div class="online">● ONLINE</div>
+</header>
 
-  <form id="loginForm">
-    <label for="username">Username</label>
-    <input id="username" autocomplete="username"
-      placeholder="তোমার Username" required
-      minlength="3" maxlength="24"
-      pattern="[A-Za-z0-9._-]+">
+<main>
 
-    <label for="password">Password</label>
-    <div class="pass">
-      <input id="password" type="password"
-        autocomplete="current-password"
-        placeholder="তোমার Password" required>
-      <button type="button" id="togglePass"
-        aria-label="Show or hide password">Show</button>
-    </div>
+<section class="hero">
+ <h1>FREE FIRE <span class="orange">INFO HUB</span></h1>
+ <p>YOUR ULTIMATE FREE FIRE INFORMATION CENTER</p>
+ <p>বাংলা + English Support</p>
+</section>
 
-    <label class="options">
-      <input type="checkbox" id="remember" checked>
-      Remember me
-    </label>
+<h2 class="section-title">⚡ Explore Features</h2>
 
-    <button class="submit" id="loginBtn" type="submit">
-      Sign In
-    </button>
-    <p class="msg" id="message" role="status"></p>
-  </form>
-  <div class="foot">🔒 Private Members Access</div>
+<div class="grid">
+
+ <div class="card" onclick="openTab('player')">
+  <div class="emoji">👤</div>
+  <h3>Player Info</h3>
+  <p>Search by UID</p>
+ </div>
+
+ <div class="card" onclick="openTab('guild')">
+  <div class="emoji">🛡️</div>
+  <h3>Guild Info</h3>
+  <p>Guild details</p>
+ </div>
+
+ <div class="card" onclick="openTab('rank')">
+  <div class="emoji">🏆</div>
+  <h3>Rank Info</h3>
+  <p>BR & CS Rank</p>
+ </div>
+
+ <div class="card" onclick="openTab('events')">
+  <div class="emoji">📅</div>
+  <h3>Events & Updates</h3>
+  <p>FF News</p>
+ </div>
+
+ <div class="card" onclick="openTab('glory')">
+  <div class="emoji">📊</div>
+  <h3>Guild Glory</h3>
+  <p>Glory Calculator</p>
+ </div>
+
+ <div class="card" onclick="openTab('nickname')">
+  <div class="emoji">✨</div>
+  <h3>Nickname Generator</h3>
+  <p>Stylish Names</p>
+ </div>
+
+</div>
+
+<!-- PLAYER SEARCH -->
+<section id="player" class="panel hidden">
+ <h3>👤 Player Information</h3>
+
+ <input id="uid" placeholder="Enter Free Fire UID">
+
+ <select id="region">
+  <option value="BD">🇧🇩 Bangladesh</option>
+  <option value="IND">🇮🇳 India</option>
+  <option value="SG">🇸🇬 Singapore</option>
+  <option value="ID">🇮🇩 Indonesia</option>
+  <option value="BR">🇧🇷 Brazil</option>
+  <option value="US">🇺🇸 United States</option>
+  <option value="ME">Middle East</option>
+  <option value="PK">Pakistan</option>
+  <option value="EUROPE">Europe</option>
+ </select>
+
+ <button id="searchBtn" onclick="searchPlayer()">
+  Search Player 🔍
+ </button>
+
+ <div id="playerResult"></div>
+</section>
+
+<!-- GUILD -->
+<section id="guild" class="panel hidden">
+ <h3>🛡️ Guild Information</h3>
+ <p style="color:#aaa;font-size:12px;margin-top:8px">
+ Enter a guild member's UID to retrieve their guild information.
+ </p>
+ <input id="guildUID" placeholder="Enter Member UID">
+ <button onclick="searchGuild()">Search Guild</button>
+ <div id="guildResult"></div>
+</section>
+
+<!-- RANK -->
+<section id="rank" class="panel hidden">
+ <h3>🏆 Rank Information</h3>
+ <p style="color:#aaa;font-size:13px;margin-top:10px">
+ Search a Player UID to see available BR and CS rank information.
+ </p>
+ <button style="margin-top:15px" onclick="openTab('player')">
+ Go to Player Search
+ </button>
+</section>
+
+<!-- EVENTS -->
+<section id="events" class="panel hidden">
+ <h3>📅 Events & Updates</h3>
+ <div class="result">
+  <b>FF INFO HUB</b>
+  <p>Event updates are not connected yet.</p>
+  <p>Verified news and event information will be added in a future update.</p>
+ </div>
+</section>
+
+<!-- GLORY -->
+<section id="glory" class="panel hidden">
+ <h3>📊 Guild Glory Calculator</h3>
+ <input type="number" id="current" placeholder="Current Glory">
+ <input type="number" id="target" placeholder="Target Glory">
+ <button onclick="calculateGlory()">Calculate Glory</button>
+ <div id="gloryResult"></div>
+</section>
+
+<!-- NICKNAME -->
+<section id="nickname" class="panel hidden">
+ <h3>✨ Nickname Generator</h3>
+ <input id="nickInput" maxlength="20" placeholder="Enter Your Name">
+ <button onclick="generateNick()">Generate Names</button>
+ <div id="nickResult"></div>
+</section>
+
 </main>
 
-<main class="card" id="dashboard">
-  <div class="logo">✓</div>
-  <h1>Login Successful</h1>
-  <p class="sub">স্বাগতম, <strong id="welcomeName"></strong>!</p>
-  <p class="sub">তুমি সফলভাবে লগইন করেছ।</p>
-  <button class="submit" id="logoutBtn">Logout</button>
-</main>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<footer>
+ FF INFO HUB © 2026<br>
+ Fan-made project. Not affiliated with Garena.
+</footer>
 
 <script>
-/* Firebase Console থেকে নিজের config বসাও */
-  firebaseConfig = {
-  apiKey: "AIzaSyCZ1X7fRuNcxUMzMFQNq8yvzXg_wm1-0Bg",
-  authDomain: "privatelogin-700c0.firebaseapp.com",
-  projectId: "privatelogin-700c0",
-  storageBucket: "privatelogin-700c0.firebasestorage.app",
-  messagingSenderId: "849920579122",
-  appId: "1:849920579122:web:a98380aa5e2b01f11e8e2b",
-  measurementId: "G-LVBBDSYY21"
-};
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const $ = id => document.getElementById(id);
 
-/* Console-এ অ্যাকাউন্ট তৈরির সময় এই suffix ব্যবহার করবে */
-const EMAIL_SUFFIX = "@members.example.com";
-
-const form = document.getElementById("loginForm");
-const message = document.getElementById("message");
-const loginBtn = document.getElementById("loginBtn");
-const loginCard = document.getElementById("loginCard");
-const dashboard = document.getElementById("dashboard");
-
-function showMessage(text) {
-  message.textContent = text;
+function openTab(id){
+ document.querySelectorAll('.panel').forEach(p=>{
+  p.classList.add('hidden');
+ });
+ $(id).classList.remove('hidden');
+ $(id).scrollIntoView({behavior:'smooth'});
 }
 
-function showLogin() {
-  loginCard.style.display = "block";
-  dashboard.style.display = "none";
+function safe(value){
+ const div=document.createElement('div');
+ div.textContent=String(value ?? 'N/A');
+ return div.innerHTML;
 }
 
-function showDashboard(username) {
-  loginCard.style.display = "none";
-  dashboard.style.display = "block";
-  document.getElementById("welcomeName").textContent = username;
+function value(v){
+ return v===null || v===undefined || v==='' ? 'N/A' : safe(v);
 }
 
-document.getElementById("togglePass").onclick = () => {
-  const input = document.getElementById("password");
-  const hidden = input.type === "password";
-  input.type = hidden ? "text" : "password";
-  document.getElementById("togglePass").textContent =
-    hidden ? "Hide" : "Show";
-};
+function stat(title,val){
+ return `
+ <div class="stat">
+  <small>${title}</small>
+  <h3>${value(val)}</h3>
+ </div>`;
+}
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  showMessage("");
+async function getPlayer(uid,region){
+ const response=await fetch(
+  `/api/player?uid=${encodeURIComponent(uid)}&region=${encodeURIComponent(region)}`
+ );
+ const data=await response.json();
 
-  const username = document.getElementById("username")
-    .value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
+ if(!response.ok || !data.success){
+  throw new Error(data.error || 'Player not found');
+ }
+ return data;
+}
 
-  if (!/^[a-z0-9._-]{3,24}$/.test(username)) {
-    showMessage("Username 3–24 অক্ষরের হতে হবে।");
-    return;
-  }
+function renderProfile(data){
+ const p=data.player;
+ const g=data.guild;
 
-  loginBtn.disabled = true;
-  loginBtn.textContent = "Checking...";
+ return `
+ <div class="result">
+  <div class="profile">
+   <div class="avatar">👤</div>
+   <div>
+    <h2>${safe(p.name)}</h2>
+    <small>UID: ${safe(p.uid)}</small>
+   </div>
+  </div>
 
-  try {
-    const persistence = document.getElementById("remember").checked
-      ? firebase.auth.Auth.Persistence.LOCAL
-      : firebase.auth.Auth.Persistence.SESSION;
+  <div class="stats">
+   ${stat('LEVEL',p.level)}
+   ${stat('LIKES',p.likes)}
+   ${stat('EXP',p.exp)}
+   ${stat('REGION',p.region)}
+  </div>
 
-    await auth.setPersistence(persistence);
+  <h3 style="margin-top:20px">🏆 Rank Details</h3>
+  <div class="stats">
+   ${stat('BR Rank ID',p.brRank)}
+   ${stat('BR Points',p.brPoints)}
+   ${stat('CS Rank ID',p.csRank)}
+   ${stat('CS Points',p.csPoints)}
+  </div>
 
-    await auth.signInWithEmailAndPassword(
-      username + EMAIL_SUFFIX, password
-    );
-    // পরের ধাপে onAuthStateChanged অনুমোদন যাচাই করবে।
-  } catch (error) {
-    showMessage("লগইন হয়নি। Username ও Password যাচাই করো।");
-  } finally {
-    loginBtn.disabled = false;
-    loginBtn.textContent = "Sign In";
-  }
-});
+  <p style="margin-top:12px;color:#aab2c0;font-size:11px">
+   Rank IDs are raw API values, not verified rank names.
+  </p>
 
-auth.onAuthStateChanged(async (user) => {
-  if (!user) {
-    showLogin();
-    return;
-  }
+  <h3 style="margin-top:20px">🛡️ Guild Details</h3>
+  <div class="stats">
+   ${stat('Guild Name',g.name)}
+   ${stat('Guild Level',g.level)}
+   ${stat('Members',g.members)}
+   ${stat('Guild ID',g.id)}
+  </div>
 
-  try {
-    const snapshot = await db.collection("users")
-      .doc(user.uid).get();
+  <button class="copy" onclick="copyUID('${safe(p.uid)}')">
+   Copy UID
+  </button>
+ </div>`;
+}
 
-    const profile = snapshot.data();
+async function searchPlayer(){
+ const uid=$('uid').value.trim();
+ const region=$('region').value;
+ const btn=$('searchBtn');
+ const output=$('playerResult');
 
-    if (!snapshot.exists ||
-        profile.active !== true ||
-        typeof profile.username !== "string" ||
-        user.email !== profile.username + EMAIL_SUFFIX) {
-      await auth.signOut();
-      showLogin();
-      showMessage("এই অ্যাকাউন্টের অনুমতি নেই।");
-      return;
-    }
+ if(!/^\d{5,15}$/.test(uid)){
+  output.innerHTML='<div class="result error">Enter a valid UID.</div>';
+  return;
+ }
 
-    showDashboard(profile.username);
-  } catch (error) {
-    await auth.signOut();
-    showLogin();
-    showMessage("অ্যাকাউন্ট যাচাই করা যায়নি। পরে চেষ্টা করো।");
-  }
-});
+ btn.disabled=true;
+ btn.textContent='Searching...';
+ output.innerHTML='<div class="result">Loading Player Information...</div>';
 
-document.getElementById("logoutBtn").onclick = async () => {
-  await auth.signOut();
-  document.getElementById("password").value = "";
-  showLogin();
-};
+ try{
+  const data=await getPlayer(uid,region);
+  output.innerHTML=renderProfile(data);
+ }catch(err){
+  output.innerHTML=
+   `<div class="result error">${safe(err.message)}</div>`;
+ }finally{
+  btn.disabled=false;
+  btn.textContent='Search Player 🔍';
+ }
+}
+
+async function searchGuild(){
+ const uid=$('guildUID').value.trim();
+ if(!/^\d{5,15}$/.test(uid)){
+  $('guildResult').innerHTML=
+   '<div class="result error">Enter a valid UID.</div>';
+  return;
+ }
+
+ $('guildResult').innerHTML=
+  '<div class="result">Searching guild...</div>';
+
+ try{
+  const data=await getPlayer(uid,$('region')?.value || 'BD');
+  const g=data.guild;
+
+  $('guildResult').innerHTML=`
+   <div class="result">
+    <h3>${safe(g.name)}</h3>
+    <p>Guild ID: ${value(g.id)}</p>
+    <p>Level: ${value(g.level)}</p>
+    <p>Members: ${value(g.members)}</p>
+    <p>Owner UID: ${value(g.owner)}</p>
+   </div>`;
+ }catch(err){
+  $('guildResult').innerHTML=
+   `<div class="result error">${safe(err.message)}</div>`;
+ }
+}
+
+function copyUID(uid){
+ navigator.clipboard.writeText(uid)
+ .then(()=>alert('Copied!'))
+ .catch(()=>alert('Copy unavailable'));
+}
+
+function calculateGlory(){
+ const a=$('current').value;
+ const b=$('target').value;
+
+ if(a==='' || b==='' || Number(a)<0 || Number(b)<0){
+  $('gloryResult').innerHTML=
+   '<div class="result error">Enter valid values.</div>';
+  return;
+ }
+
+ const diff=Number(b)-Number(a);
+
+ $('gloryResult').innerHTML=`
+  <div class="result">
+   ${diff>0?'Remaining Glory: '+diff:
+     diff===0?'Target Reached!':
+     'Target exceeded by '+Math.abs(diff)}
+  </div>`;
+}
+
+function generateNick(){
+ const name=$('nickInput').value.trim();
+
+ if(!name){
+  alert('Enter a name');
+  return;
+ }
+
+ const styles=[
+  '亗'+name+'亗',
+  '『'+name+'』',
+  '꧁'+name+'꧂',
+  '么'+name+'么',
+  '乂'+name+'乂',
+  '★'+name+'★',
+  'メ'+name+'メ',
+  '『ᴾᴿᴼ』'+name
+ ];
+
+ $('nickResult').innerHTML='';
+
+ styles.forEach(n=>{
+  const item=document.createElement('div');
+  item.className='result';
+  item.textContent=n+'  📋';
+  item.style.cursor='pointer';
+  item.onclick=()=>{
+   navigator.clipboard.writeText(n)
+    .then(()=>alert('Nickname copied!'))
+    .catch(()=>alert('Copy unavailable'));
+  };
+  $('nickResult').appendChild(item);
+ });
+}
+
 </script>
 </body>
   </html>
