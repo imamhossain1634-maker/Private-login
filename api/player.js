@@ -104,11 +104,12 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("FF API Error:", error.message);
+  console.error("FF API Error:", error);
 
-    return res.status(502).json({
-      success: false,
-      error: "Unable to connect to Free Fire API"
-    });
-  }
-      }
+  return res.status(502).json({
+    success: false,
+    error: "Connection Failed",
+    details: error.message,
+    code: error.cause?.code || "UNKNOWN"
+  });
+        }
